@@ -4,6 +4,8 @@
 
 var program = require('commander'),
     Promise = require('bluebird'),
+    path = require('path'),
+    util = require('util'),
     readFile = Promise.promisify(require('fs').readFile),
     writeFile = Promise.promisify(require('fs').writeFile),
     profiles = require('./lib/profiles'),
@@ -19,6 +21,7 @@ program.version(require('./package.json').version)
     .option('-c, --class <c>', 'Class to search')
     .option('-d, --dump-rankings <file>', 'File to dump ranking info to')
     .option('-t, --top <n>', 'How many of the top profiles to inspect [100]', 100)
+    .option('-o, --output-folder <folder>', 'Folder to place output in')
     .parse(process.argv);
 
 var host = 'us.battle.net',
@@ -42,22 +45,36 @@ if (program.rankings) {
     return console.error("Um not much we can do here w/out rankings file or class specified");
 }
 
-rankings.then(function (rankings) {
-    return rankings.splice(0, program.top)
-        .map(function (ranking) {
-            return profiles(host, ranking);
-        });
+var p = rankings.then(function (rankings) {
+    return rankings.splice(0, program.top);
+}).map(function (ranking) {
+    console.log('getting profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
+    return profiles(host, ranking);
+}, {
+    concurrency: 5
 }).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
         return null;
     } else {
+        console.log('getting hero for %s#%s [tier: %d]', profile.ranking.name, profile.ranking.tag, profile.ranking.tier);
         return profile.getHero(heroList[0].id);
     }
-}).map(function(hero) {
-    console.log(hero.toString());
-}).catch(function (err) {
+}, {
+    concurrency: 5
+});
+
+if (program.outputFolder)
+    p = p.map(function (hero) {
+        var fname = util.format('%s-%s-%s.json', hero.profile.ranking.name, hero.profile.ranking.tag, hero.name);
+        return writeFile(path.join(program.outputFolder, fname), JSON.stringify(hero))
+            .return(fname);
+    }).each(function (file) {
+        console.log("Wrote file %s", file);
+    });
+
+p = p.catch(function (err) {
     console.log(err);
     console.log(err.stack);
 });
