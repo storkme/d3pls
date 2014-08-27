@@ -38,6 +38,7 @@ if (program.rankings) {
 }
 
 rankings.then(function (rankings) {
+    console.dir(rankings);
     return rankings.splice(0, program.top);
 }).map(function(ranking) {
     return profiles(host, ranking.name, ranking.tag);
