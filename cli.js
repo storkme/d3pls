@@ -46,14 +46,17 @@ rankings.then(function (rankings) {
         .map(function (ranking) {
             return profiles(host, ranking.name, ranking.tag);
         });
-}).each(function (profile) {
+}).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
+        console.log("No suitable heroes found");
+        return null;
     } else {
-        var hero = profile.getHero(heroList[0].id);
-
+        return profile.getHero(heroList[0].id);
     }
+}).each(function(hero) {
+    console.dir(hero);
 }).catch(function (err) {
     console.log(err);
     console.log(err.stack);
