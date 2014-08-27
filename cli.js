@@ -8,9 +8,11 @@ var program = require('commander'),
     writeFile = Promise.promisify(require('fs').writeFile),
     profiles = require('./lib/profiles'),
     heroes = require('./lib/hero'),
+    db = require('./lib/db'),
     scraper = require('./lib/rankings-scraper');
 
 Promise.promisifyAll(require("request"));
+Promise.promisifyAll(require("mongodb"));
 
 program.version(require('./package.json').version)
     .option('-r, --rankings <file>', 'File to read ranking info from')
