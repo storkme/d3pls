@@ -27,7 +27,8 @@ if (program.rankings) {
         return JSON.parse(result);
     });
 } else if (program.class) {
-    rankings = scraper('http://' + host + '/d3/en/rankings/era/1/rift-' + program.class);
+    var url = 'http://' + host + '/d3/en/rankings/era/1/rift-' + program.class;
+    rankings = scraper(url);
 
     if (program.dumpRankings) {
         rankings = rankings.then(function (result) {
