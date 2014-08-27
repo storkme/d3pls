@@ -65,6 +65,22 @@ var p = rankings.then(function (rankings) {
     concurrency: 5
 });
 
+p = Promise.using(db('mongodb://localhost:27017/d3i'), p, function(c, heroes) {
+    var collection = c.collection('heroes');
+    heroes = heroes.map(function(hero) {
+        return collection.insertAsync(hero)
+            .tap(function() {
+                console.log("inserted thing");
+            })
+            .return(hero);
+    });
+    return Promise.all(heroes);
+}).tap(function() {
+    console.log("inserted stuff");
+}).catch(function(err) {
+    console.log("Couldn't insert shit");
+});
+
 if (program.outputFolder)
     p = p.map(function (hero) {
         var fname = util.format('%s-%s-%s.json', hero.profile.ranking.name, hero.profile.ranking.tag, hero.name);
