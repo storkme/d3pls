@@ -1,0 +1,47 @@
+{
+  "name": "d3i",
+  "version": "0.0.0",
+  "main": "lib/d3i.js",
+  "description": "d3 ladder inspector",
+  "homepage": "https://github.com/storkme/d3i",
+  "bugs": "https://github.com/storkme/d3i/issues",
+  "author": {
+    "name": "storkme",
+    "email": "stork@not.gd",
+    "url": "not.gd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/storkme/d3i"
+  },
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "d3i",
+    ""
+  ],
+  "devDependencies": {
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-nodeunit": "^0.3.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "load-grunt-tasks": "^0.4.0",
+    "time-grunt": "^0.3.1",
+    "grunt-mocha-cli": "^1.9.0",
+    "jshint-stylish": "^0.2.0"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "bin": {
+    "d3i": "cli.js"
+  },
+  "preferGlobal": "true",
+  "dependencies": {
+    "bluebird": "^2.3.2",
+    "cheerio": "^0.17.0",
+    "commander": "^2.3.0",
+    "request-promise": "^0.1.2"
+  }
+}
