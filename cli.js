@@ -41,10 +41,9 @@ if (program.rankings) {
 }
 
 rankings.then(function (rankings) {
-    console.log(program.top + " results!!");
     return rankings.splice(0, program.top)
         .map(function (ranking) {
-            return profiles(host, ranking.name, ranking.tag);
+            return profiles(host, ranking);
         });
 }).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
@@ -55,8 +54,8 @@ rankings.then(function (rankings) {
     } else {
         return profile.getHero(heroList[0].id);
     }
-}).each(function(hero) {
-    console.dir(hero);
+}).map(function(hero) {
+    
 }).catch(function (err) {
     console.log(err);
     console.log(err.stack);
