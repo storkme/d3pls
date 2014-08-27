@@ -49,13 +49,12 @@ rankings.then(function (rankings) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
-        console.log("No suitable heroes found");
         return null;
     } else {
         return profile.getHero(heroList[0].id);
     }
 }).map(function(hero) {
-    
+    console.log(hero.toString());
 }).catch(function (err) {
     console.log(err);
     console.log(err.stack);
