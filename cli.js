@@ -7,7 +7,7 @@ var program = require('commander'),
     readFile = Promise.promisify(require('fs').readFile),
     writeFile = Promise.promisify(require('fs').writeFile),
     profiles = require('./lib/profiles'),
-    heroes = require('./lib/heroes'),
+    heroes = require('./lib/hero'),
     scraper = require('./lib/rankings-scraper');
 
 Promise.promisifyAll(require("request"));
@@ -41,14 +41,20 @@ if (program.rankings) {
 }
 
 rankings.then(function (rankings) {
-    console.dir(rankings);
+    console.log(program.top + " results!!");
     return rankings.splice(0, program.top)
         .map(function (ranking) {
             return profiles(host, ranking.name, ranking.tag);
         });
 }).each(function (profile) {
-    var heroes = heroes(profile.heroes, program.class);
-    console.log("heroes for " + profile.name + ": " + heroes.length);
+    var heroList = profile.getBestHeroes(program.class);
+    if (heroList.length === 0) {
+        //no suitable heroes!
+    } else {
+        var hero = profile.getHero(heroList[0].id);
+
+    }
 }).catch(function (err) {
     console.log(err);
+    console.log(err.stack);
 });
