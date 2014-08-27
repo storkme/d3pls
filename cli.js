@@ -38,14 +38,12 @@ if (program.rankings) {
 }
 
 rankings.then(function (rankings) {
-    rankings = rankings.splice(0, program.top);
-    var d3profiles = rankings.map(function (ranking) {
-        return profiles(host, ranking.name, ranking.tag);
-    });
-
-    Promise.map(d3profiles, function (profile) {
-        return heroes(profile.heroes, program.class);
-    }).each(function (heroes) {
-        console.log("heroes for " + profile.name + ": " + heroes.length);
-    });
+    return rankings.splice(0, program.top);
+}).map(function(ranking) {
+    return profiles(host, ranking.name, ranking.tag);
+}).each(function(profile) {
+   var heroes = heroes(profile.heroes, program.class);
+    console.log("heroes for " + profile.name + ": " + heroes.length);
+}).catch(function(err) {
+    console.log(err);
 });
