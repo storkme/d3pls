@@ -44,11 +44,12 @@ if (program.rankings) {
 }
 
 var p = rankings.then(function (rankings) {
-    return rankings.splice(0, program.top)
-        .map(function (ranking) {
-            console.log('getting profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
-            return profiles(host, ranking);
-        });
+    return rankings.splice(0, program.top);
+}).map(function (ranking) {
+    console.log('getting profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
+    return profiles(host, ranking);
+}, {
+    concurrency: 5
 }).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
@@ -64,7 +65,7 @@ var p = rankings.then(function (rankings) {
 
 if (program.outputFolder)
     p = p.map(function (hero) {
-        var fname = util.format('%s-%s-%s.json', hero.profile.name, hero.profile.tag, hero.name);
+        var fname = util.format('%s-%s-%s.json', hero.profile.ranking.name, hero.profile.ranking.tag, hero.name);
         return writeFile(path.join(program.outputFolder, fname), JSON.stringify(hero))
             .return(fname);
     }).each(function (file) {
