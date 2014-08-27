@@ -39,12 +39,13 @@ if (program.rankings) {
 
 rankings.then(function (rankings) {
     console.dir(rankings);
-    return rankings.splice(0, program.top);
-}).map(function(ranking) {
-    return profiles(host, ranking.name, ranking.tag);
-}).each(function(profile) {
-   var heroes = heroes(profile.heroes, program.class);
+    return rankings.splice(0, program.top)
+        .map(function (ranking) {
+            return profiles(host, ranking.name, ranking.tag);
+        });
+}).each(function (profile) {
+    var heroes = heroes(profile.heroes, program.class);
     console.log("heroes for " + profile.name + ": " + heroes.length);
-}).catch(function(err) {
+}).catch(function (err) {
     console.log(err);
 });
