@@ -10,6 +10,8 @@ var program = require('commander'),
     heroes = require('./lib/heroes'),
     scraper = require('./lib/rankings-scraper');
 
+Promise.promisifyAll(require("request"));
+
 program.version(require('./package.json').version)
     .option('-r, --rankings <file>', 'File to read ranking info from')
     .option('-c, --class <c>', 'Class to search')
