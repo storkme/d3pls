@@ -53,18 +53,30 @@ create table d3i.skills (
     tooltip_url varchar(50) not null,
     description varchar(500) not null,
     simple_description varchar(250),
-    flavor varchar(500),
-    skill_calc_id varchar(5) not null UNIQUE,
-    is_passive boolean not null
+    skill_calc_id varchar(5) not null UNIQUE
+);
+
+create table d3i.passives (
+    id SERIAL,
+    slug varchar(30) not null,
+    name varchar(30) not null,
+    icon varchar(50) not null,
+    level integer not null,
+    category_slug varchar(30),
+    tooltip_url varchar(50) not null,
+    description varchar(500) not null,
+    simple_description varchar(250),
+    skill_calc_id varchar(5) not null UNIQUE
 );
 
 create table d3i.runes (
     id SERIAL,
+    order: 0
     name varchar(50) not null,
     slug varchar(30) not null,
     type varchar(5) not null,
     level integer not null,
-    tooltip_url varchar(50) not null,
+    tooltip_params varchar(50) not null,
     description varchar(500) not null,
     simple_description varchar(250) not null,
     skill_calc_id varchar(5) not null UNIQUE,
