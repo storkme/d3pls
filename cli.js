@@ -65,7 +65,7 @@ var p = rankings.then(function (rankings) {
     concurrency: 5
 });
 
-var saveHero = db('postgres://d3i:eeee@localhost/');
+var saveHero = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
     return saveHero(hero);
 });
