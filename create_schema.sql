@@ -1,5 +1,5 @@
 CREATE TYPE d3i.item_slot AS ENUM (
-    'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers', 'mainHand', 'offhand',
+    'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers', 'mainHand', 'offHand',
     'waist',
     'rightFinger', 'leftFinger', 'neck'
 );
