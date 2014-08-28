@@ -28,7 +28,7 @@ create table d3i.items (
     icon varchar(50) not null,
     color varchar(50) not null,
     tooltip_params varchar(1000) not null,
-    slot item_slot not null
+    slot d3i.item_slot not null
 );
 
 create table d3i.hero_item (
