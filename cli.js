@@ -51,7 +51,7 @@ var p = rankings.then(function (rankings) {
     console.log('getting profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
     return profiles(host, ranking);
 }, {
-    concurrency: 5
+    concurrency: 10
 }).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
@@ -62,7 +62,11 @@ var p = rankings.then(function (rankings) {
         return profile.getHero(heroList[0].id);
     }
 }, {
-    concurrency: 5
+    concurrency: 10
+}).map(function(hero) {
+
+}, {
+    concurrency: 10
 });
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
