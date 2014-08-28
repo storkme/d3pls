@@ -64,7 +64,7 @@ var p = rankings.then(function (rankings) {
 }, {
     concurrency: 10
 }).map(function(hero) {
-
+    return hero;
 }, {
     concurrency: 10
 });
