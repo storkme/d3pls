@@ -47,7 +47,8 @@ create table d3i.hero_skills (
 );
 
 create table d3i.skills (
-    id SERIAL,
+    id varchar(5) not null,
+    parent_id varchar(5),
     slug varchar(30) not null,
     name varchar(30) not null,
     level integer not null,
@@ -56,8 +57,7 @@ create table d3i.skills (
     class varchar(50) not null,
     icon varchar(50),
     type d3i_skill_type not null,
-    skill_calc_id varchar(5) not null,
-    unique(skill_calc_id, class, type)
+    unique(id, parent_id, class, type)
 );
 
 grant usage on schema d3i to d3i;
