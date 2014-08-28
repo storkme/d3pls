@@ -71,6 +71,9 @@ p = p.each(function (hero) {
 }).then(function () {
     console.log("Saving skills....");
     return connection.saveSkills();
+}).then(function() {
+    //i know this is crappy but that's how i roll suck it nerds
+    connection.destroy();
 });
 
 // does this even work any more?
