@@ -14,7 +14,7 @@ var program = require('commander'),
     scraper = require('./lib/rankings-scraper');
 
 Promise.promisifyAll(require("request"));
-Promise.promisifyAll(require("mongodb"));
+Promise.promisifyAll(require("pg"));
 
 program.version(require('./package.json').version)
     .option('-r, --rankings <file>', 'File to read ranking info from')
@@ -65,19 +65,16 @@ var p = rankings.then(function (rankings) {
     concurrency: 5
 });
 
-p = Promise.using(db('mongodb://localhost:27017/d3i'), p, function(c, heroes) {
+var saveHero = db('postgres://d3i:eee@localhost/');
+p = Promise.using(db('mongodb://localhost:27017/d3i'), p, function (c, heroes) {
     var collection = c.collection('heroes');
-    heroes = heroes.map(function(hero) {
-        return collection.insertAsync(hero)
-            .tap(function() {
-                console.log("inserted thing");
-            })
-            .return(hero);
+    heroes = heroes.map(function (hero) {
+        return saveHero(hero);
     });
     return Promise.all(heroes);
-}).tap(function() {
+}).tap(function () {
     console.log("inserted stuff");
-}).catch(function(err) {
+}).catch(function (err) {
     console.log("Couldn't insert shit");
 });
 
