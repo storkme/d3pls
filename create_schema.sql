@@ -1,7 +1,10 @@
 CREATE TYPE d3i.item_slot AS ENUM (
-    'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers', 'mainHand', 'offHand',
-    'waist',
-    'rightFinger', 'leftFinger', 'neck'
+    'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers',
+    'mainHand', 'offHand', 'waist', 'rightFinger', 'leftFinger', 'neck'
+);
+
+CREATE TYPE d3i.skill_type AS ENUM (
+    'passive','skill', 'rune'
 );
 
 create table d3i.hero (
@@ -47,40 +50,14 @@ create table d3i.skills (
     id SERIAL,
     slug varchar(30) not null,
     name varchar(30) not null,
-    icon varchar(50) not null,
     level integer not null,
-    category_slug varchar(30),
-    tooltip_url varchar(50) not null,
+    tooltip varchar(50) not null,
     description varchar(500) not null,
-    simple_description varchar(250),
-    skill_calc_id varchar(5) not null UNIQUE
-);
-
-create table d3i.passives (
-    id SERIAL,
-    slug varchar(30) not null,
-    name varchar(30) not null,
-    icon varchar(50) not null,
-    level integer not null,
-    category_slug varchar(30),
-    tooltip_url varchar(50) not null,
-    description varchar(500) not null,
-    simple_description varchar(250),
-    skill_calc_id varchar(5) not null UNIQUE
-);
-
-create table d3i.runes (
-    id SERIAL,
-    order: 0
-    name varchar(50) not null,
-    slug varchar(30) not null,
-    type varchar(5) not null,
-    level integer not null,
-    tooltip_params varchar(50) not null,
-    description varchar(500) not null,
-    simple_description varchar(250) not null,
-    skill_calc_id varchar(5) not null UNIQUE,
-    "order" integer not null
+    class varchar(50) not null,
+    icon varchar(50),
+    type varchar(50),
+    skill_calc_id varchar(5) not null,
+    unique(skill_calc_id, class, type)
 );
 
 grant usage on schema d3i to d3i;
