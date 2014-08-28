@@ -74,7 +74,7 @@ p = p.each(function (hero) {
     return connection.saveHero(hero);
 }).then(function () {
     console.log("Saving skills....");
-    return connection.saveSkills();
+    return connection.saveSkills(program.class);
 }).then(function() {
     //i know this is crappy but that's how i roll suck it nerds
     connection.destroy();
