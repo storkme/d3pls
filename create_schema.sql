@@ -49,7 +49,7 @@ create table d3i.skills (
     name varchar(30) not null,
     icon varchar(50) not null,
     level integer not null,
-    category_slug varchar(30) not null,
+    category_slug varchar(30),
     tooltip_url varchar(50) not null,
     description varchar(500) not null,
     simple_description varchar(250),
