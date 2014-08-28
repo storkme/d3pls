@@ -70,7 +70,7 @@ p = p.each(function (hero) {
     return connection.saveHero(hero);
 }).then(function () {
     console.log("Saving skills....");
-    connection.saveSkills();
+    return connection.saveSkills();
 });
 
 // does this even work any more?
