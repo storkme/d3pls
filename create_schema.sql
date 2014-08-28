@@ -1,4 +1,4 @@
-create table skills (
+create table d3i.skills (
     id SERIAL,
     slug varchar(30) not null,
     name varchar(30) not null,
@@ -10,10 +10,10 @@ create table skills (
     simple_description varchar(250),
     flavor varchar(500),
     skill_calc_id varchar(5) not null,
-    is_passive boolean
+    is_passive boolean not null
 );
 
-create table runes (
+create table d3i.runes (
     id SERIAL,
     slug varchar(30) not null,
     type varchar(5) not null,
@@ -23,10 +23,10 @@ create table runes (
     description varchar(500) not null,
     simple_description varchar(250) not null,
     skill_calc_id varchar(5) not null,
-    "order" integer not null,
+    "order" integer not null
 );
 
-create table items (
+create table d3i.items (
     id SERIAL,
     item_id varchar(50) not null,
     name varchar(50) not null,
@@ -35,13 +35,13 @@ create table items (
     tooltip_params varchar(1000) not null
 );
 
-create table hero_stats (
+create table d3i.hero_stats (
     hero_id integer not null,
     name varchar(50) not null,
     value real not null
 );
 
-create table hero (
+create table d3i.hero (
     id SERIAL,
     hero_id integer not null,
     name varchar(50) not null,
@@ -53,18 +53,18 @@ create table hero (
     last_updated integer not null
 );
 
-CREATE TYPE item_slot AS ENUM (
+CREATE TYPE d3i.item_slot AS ENUM (
     'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers', 'mainHand', 'waist',
     'rightFinger', 'leftFinger', 'neck'
 );
 
-create table hero_item (
+create table d3i.hero_item (
     hero_id integer not null,
     item_id integer not null,
     slot item_slot not null
 );
 
-create table hero_skill (
+create table d3i.hero_skill (
     hero_id integer not null,
     skill_id integer not null,
     rune_id integer not null
