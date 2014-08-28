@@ -60,6 +60,7 @@ create table d3i.skills (
 
 create table d3i.runes (
     id SERIAL,
+    name varchar(50) not null,
     slug varchar(30) not null,
     type varchar(5) not null,
     level integer not null,
