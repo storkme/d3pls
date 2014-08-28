@@ -67,10 +67,7 @@ var p = rankings.then(function (rankings) {
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    return connection.saveHero(hero)
-        .tap(function (hero) {
-            console.log("Saved hero " + hero.toString());
-        });
+    return connection.saveHero(hero);
 }).then(function () {
     console.log("Saving skills....");
     connection.saveSkills();
