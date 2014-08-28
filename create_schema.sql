@@ -23,7 +23,7 @@ create table runes (
     description varchar(500) not null,
     simple_description varchar(250) not null,
     skill_calc_id varchar(5) not null,
-    'order' integer not null,
+    "order" integer not null,
 );
 
 create table items (
