@@ -65,11 +65,18 @@ var p = rankings.then(function (rankings) {
     concurrency: 5
 });
 
-var saveHero = db('postgres://d3i:eeee@localhost/d3i').saveHero;
+var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    return saveHero(hero);
+    return connection.saveHero(hero)
+        .tap(function (hero) {
+            console.log("Saved hero " + hero.toString());
+        });
+}).then(function () {
+    console.log("Saving skills....");
+    connection.saveSkills();
 });
 
+// does this even work any more?
 if (program.outputFolder)
     p = p.map(function (hero) {
         var fname = util.format('%s-%s-%s.json', hero.profile.ranking.name, hero.profile.ranking.tag, hero.name);
