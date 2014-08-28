@@ -63,7 +63,6 @@ create table d3i.runes (
     slug varchar(30) not null,
     type varchar(5) not null,
     level integer not null,
-    category_slug varchar(30) not null,
     tooltip_params varchar(50) not null,
     description varchar(500) not null,
     simple_description varchar(250) not null,
