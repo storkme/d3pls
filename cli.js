@@ -66,16 +66,8 @@ var p = rankings.then(function (rankings) {
 });
 
 var saveHero = db('postgres://d3i:eee@localhost/');
-p = Promise.using(db('mongodb://localhost:27017/d3i'), p, function (c, heroes) {
-    var collection = c.collection('heroes');
-    heroes = heroes.map(function (hero) {
-        return saveHero(hero);
-    });
-    return Promise.all(heroes);
-}).tap(function () {
-    console.log("inserted stuff");
-}).catch(function (err) {
-    console.log("Couldn't insert shit");
+p = p.each(function (hero) {
+    return saveHero(hero);
 });
 
 if (program.outputFolder)
