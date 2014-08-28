@@ -55,7 +55,7 @@ create table d3i.skills (
     description varchar(500) not null,
     class varchar(50) not null,
     icon varchar(50),
-    type varchar(50),
+    type d3i_skill_type not null,
     skill_calc_id varchar(5) not null,
     unique(skill_calc_id, class, type)
 );
