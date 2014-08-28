@@ -1,5 +1,5 @@
 create table skills (
-    id integer not null auto_increment primary key,
+    id SERIAL,
     slug varchar(30) not null,
     name varchar(30) not null,
     icon varchar(50) not null,
@@ -14,7 +14,7 @@ create table skills (
 );
 
 create table runes (
-    id integer not null auto_increment primary key,
+    id SERIAL,
     slug varchar(30) not null,
     type varchar(5) not null,
     level integer not null,
@@ -27,7 +27,7 @@ create table runes (
 );
 
 create table items (
-    id integer not null auto_increment primary key,
+    id SERIAL,
     item_id varchar(50) not null,
     name varchar(50) not null,
     icon varchar(50) not null,
@@ -42,7 +42,7 @@ create table hero_stats (
 );
 
 create table hero (
-    id integer not null auto_increment primary key,
+    id SERIAL,
     hero_id integer not null,
     name varchar(50) not null,
     class varchar(50) not null,
