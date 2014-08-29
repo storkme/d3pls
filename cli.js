@@ -82,7 +82,7 @@ p = p.each(function (hero) {
         console.error(err);
         console.dir(hero);
     });
-}).then(function () {
+}).all().then(function () {
     return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
     });
