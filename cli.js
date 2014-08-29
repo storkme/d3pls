@@ -75,16 +75,15 @@ var p = rankings.then(function (rankings) {
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    if (hero != null)
-        return connection.saveHero(hero).tap(function () {
-            console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
-        }).catch(function(err) {
-            console.error("failed inserting data for hero "+hero.toString());
-            console.error(err);
-            console.dir(hero);
-        });
+    return connection.saveHero(hero).tap(function () {
+        console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
+    }).catch(function (err) {
+        console.error("failed inserting data for hero " + hero.toString());
+        console.error(err);
+        console.dir(hero);
+    });
 }).then(function () {
-    return connection.saveSkills(program.class).tap(function() {
+    return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
     });
 }).then(function () {
