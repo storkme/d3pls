@@ -49,9 +49,8 @@ var p = rankings.then(function (rankings) {
     return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
     return profiles(host, ranking)
-        .then(function (f) {
-            console.log('-> profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
-            return f;
+        .tap(function (profile) {
+            console.log('-> fetched profile for %s', profile);
         });
 }, {
     concurrency: 10
@@ -59,17 +58,19 @@ var p = rankings.then(function (rankings) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
-        return Promise.reject(new Error('profile ' + profile.toString() + ' has no suitable heroes'));
+        return Promise.resolve(null);
     } else {
         return profile.getHero(heroList[0].id)
             .then(function (f) {
-                console.log('-> hero for %s#%s [tier: %d]',
-                    f.profile.ranking.name, f.profile.ranking.tag, f.profile.ranking.tier);
+                console.log('-> hero for %s', f.profile);
                 return f;
             });
     }
 }, {
     concurrency: 10
+}).filter(function(hero) {
+    //weed out null heroes!
+    return hero != null;
 });
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
