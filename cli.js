@@ -59,7 +59,7 @@ var p = rankings.then(function (rankings) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
-        return null;
+        return Promise.reject(new Error('profile ' + profile.toString() + ' has no suitable heroes'));
     } else {
         return profile.getHero(heroList[0].id)
             .then(function (f) {
@@ -82,7 +82,7 @@ p = p.each(function (hero) {
             console.error(err);
             console.dir(hero);
         });
-}).all().then(function () {
+}).then(function () {
     return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
     });
