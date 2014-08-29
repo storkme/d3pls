@@ -48,19 +48,21 @@ if (program.rankings) {
 var p = rankings.then(function (rankings) {
     return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
-    return profiles(host, ranking);
+    return profiles(host, ranking).tap(function(profile){
+        console.log('-> saved profile %s', profile);
+    });
 }, {
     concurrency: 10
 }).map(function (profile) {
     var heroList = profile.getBestHeroes(program.class);
     if (heroList.length === 0) {
         //no suitable heroes!
+        console.log('profile %s has no suitable heroes', profile);
         return Promise.resolve(null);
     } else {
         return profile.getHero(heroList[0].id)
-            .then(function (f) {
-                console.log('-> hero for %s', f.profile);
-                return f;
+            .tap(function(hero){
+                console.log('-> saved hero %s', hero);
             });
     }
 }, {
