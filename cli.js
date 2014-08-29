@@ -46,10 +46,12 @@ if (program.rankings) {
 }
 
 var p = rankings.then(function (rankings) {
-    return rankings.splice(0, program.top);
+    return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
-    console.log('getting profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
-    return profiles(host, ranking);
+    return profiles(host, ranking)
+        .tap(function () {
+            console.log('-> profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
+        });
 }, {
     concurrency: 10
 }).map(function (profile) {
@@ -58,12 +60,14 @@ var p = rankings.then(function (rankings) {
         //no suitable heroes!
         return null;
     } else {
-        console.log('getting hero for %s#%s [tier: %d]', profile.ranking.name, profile.ranking.tag, profile.ranking.tier);
-        return profile.getHero(heroList[0].id);
+        return profile.getHero(heroList[0].id)
+            .tap(function () {
+                console.log('-> hero for %s#%s [tier: %d]', profile.ranking.name, profile.ranking.tag, profile.ranking.tier);
+            });
     }
 }, {
     concurrency: 10
-}).map(function(hero) {
+}).map(function (hero) {
     return hero;
 }, {
     concurrency: 10
@@ -71,11 +75,14 @@ var p = rankings.then(function (rankings) {
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    return connection.saveHero(hero);
+    if (hero != null)
+        return connection.saveHero(hero).tap(function () {
+            console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
+        });
 }).then(function () {
     console.log("Saving skills....");
     return connection.saveSkills(program.class);
-}).then(function() {
+}).then(function () {
     //i know this is crappy but that's how i roll suck it nerds
     connection.destroy();
 });
