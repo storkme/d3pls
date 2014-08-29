@@ -78,6 +78,10 @@ p = p.each(function (hero) {
     if (hero != null)
         return connection.saveHero(hero).tap(function () {
             console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
+        }).catch(function(err) {
+            console.error("failed inserting data for hero "+hero.toString());
+            console.error(err);
+            console.dir(hero);
         });
 }).then(function () {
     console.log("Saving skills....");
