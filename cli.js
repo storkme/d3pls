@@ -63,7 +63,8 @@ var p = rankings.then(function (rankings) {
     } else {
         return profile.getHero(heroList[0].id)
             .then(function (f) {
-                console.log('-> hero for %s#%s [tier: %d]', profile.ranking.name, profile.ranking.tag, profile.ranking.tier);
+                console.log('-> hero for %s#%s [tier: %d]',
+                    f.profile.ranking.name, f.profile.ranking.tag, f.profile.ranking.tier);
                 return f;
             });
     }
@@ -73,13 +74,14 @@ var p = rankings.then(function (rankings) {
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    return connection.saveHero(hero).tap(function () {
-        console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
-    }).catch(function (err) {
-        console.error("failed inserting data for hero " + hero.toString());
-        console.error(err);
-        console.dir(hero);
-    });
+    if (hero != null)
+        return connection.saveHero(hero).tap(function () {
+            console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
+        }).catch(function (err) {
+            console.error("failed inserting data for hero " + hero.toString());
+            console.error(err);
+            console.dir(hero);
+        });
 }).all().then(function () {
     return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
