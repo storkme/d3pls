@@ -84,8 +84,9 @@ p = p.each(function (hero) {
             console.dir(hero);
         });
 }).then(function () {
-    console.log("Saving skills....");
-    return connection.saveSkills(program.class);
+    return connection.saveSkills(program.class).tap(function() {
+        console.log("Saved skills.");
+    });
 }).then(function () {
     //i know this is crappy but that's how i roll suck it nerds
     connection.destroy();
