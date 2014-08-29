@@ -25,7 +25,11 @@ program.version(require('./package.json').version)
     .parse(process.argv);
 
 var host = 'us.battle.net',
-    rankings;
+    rankings,
+    classMap = {
+        dh: 'demon-hunter',
+        wd: 'witch-doctor'
+    }, clss;
 
 if (program.rankings) {
     rankings = readFile(program.rankings).then(function (result) {
@@ -34,6 +38,7 @@ if (program.rankings) {
 } else if (program.class) {
     var url = 'http://' + host + '/d3/en/rankings/era/1/rift-' + program.class;
     rankings = scraper(url);
+    clss = classMap[program.class] || program.class;
 
     if (program.dumpRankings) {
         rankings = rankings.then(function (result) {
@@ -48,20 +53,20 @@ if (program.rankings) {
 var p = rankings.then(function (rankings) {
     return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
-    return profiles(host, ranking).tap(function(profile){
+    return profiles(host, ranking).tap(function (profile) {
         console.log('-> saved profile %s', profile);
     });
 }, {
     concurrency: 10
 }).map(function (profile) {
-    var heroList = profile.getBestHeroes(program.class);
+    var heroList = profile.getBestHeroes(clss);
     if (heroList.length === 0) {
         //no suitable heroes!
         console.log('profile %s has no suitable heroes', profile);
         return Promise.resolve(null);
     } else {
         return profile.getHero(heroList[0].id)
-            .tap(function(hero){
+            .tap(function (hero) {
                 console.log('-> saved hero %s', hero);
             });
     }
@@ -73,7 +78,7 @@ var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
     return hero === null ? Promise.resolve(null) : connection.saveHero(hero);
 }).then(function () {
-    return connection.saveSkills(program.class).tap(function () {
+    return connection.saveSkills(clss).tap(function () {
         console.log("Saved skills.");
     });
 }).then(function () {
