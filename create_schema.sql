@@ -47,7 +47,7 @@ create table d3i.hero_skills (
 );
 
 create table d3i.skills (
-    id varchar(5) not null PRIMARY KEY,
+    id varchar(5) not null,
     parent_id varchar(5),
     slug varchar(30) not null,
     name varchar(30) not null,
