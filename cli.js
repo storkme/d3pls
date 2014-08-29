@@ -65,14 +65,11 @@ var p = rankings.then(function (rankings) {
     }
 }, {
     concurrency: 10
-}).filter(function (hero) {
-    //weed out null heroes!
-    return hero != null;
 });
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    return connection.saveHero(hero);
+    return hero === null ? Promise.resolve(null) : connection.saveHero(hero);
 }).then(function () {
     return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
