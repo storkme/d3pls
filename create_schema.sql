@@ -10,28 +10,28 @@ CREATE TYPE d3i.skill_type AS ENUM (
 create table d3i.hero (
     id SERIAL PRIMARY KEY,
     hero_id integer not null UNIQUE,
-    name varchar(50) not null,
-    class varchar(50) not null,
+    name text not null,
+    class text not null,
     level integer not null,
-    battle_tag varchar(50) not null,
+    battle_tag text not null,
     ranking_tier integer not null,
-    ranking_time varchar(50) not null,
+    ranking_time text not null,
     last_updated integer not null
 );
 
 create table d3i.hero_stats (
     hero_id integer not null,
-    name varchar(50) not null,
+    name text not null,
     value real not null
 );
 
 create table d3i.items (
     id SERIAL PRIMARY KEY,
-    item_id varchar(50) not null,
-    name varchar(50) not null,
-    icon varchar(50) not null,
-    color varchar(50) not null,
-    tooltip_params varchar(1000) not null,
+    item_id text not null,
+    name text not null,
+    icon text not null,
+    color text not null,
+    tooltip_params text not null,
     slot d3i.item_slot not null
 );
 
@@ -42,20 +42,20 @@ create table d3i.hero_item (
 
 create table d3i.hero_skills (
     hero_id integer not null,
-    skill_id varchar(2) not null,
-    rune_id varchar(2)
+    skill_id text not null,
+    rune_id text
 );
 
 create table d3i.skills (
-    id varchar(5) not null,
-    parent_id varchar(5),
-    slug varchar(30) not null,
-    name varchar(30) not null,
+    id text not null,
+    parent_id text,
+    slug text not null,
+    name text not null,
     level integer not null,
-    tooltip varchar(50) not null,
-    description varchar(500) not null,
-    class varchar(50) not null,
-    icon varchar(50),
+    tooltip text not null,
+    description text not null,
+    class text not null,
+    icon text,
     type d3i. skill_type not null,
     unique(id, parent_id, class, type)
 );
