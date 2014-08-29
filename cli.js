@@ -49,8 +49,9 @@ var p = rankings.then(function (rankings) {
     return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
     return profiles(host, ranking)
-        .tap(function () {
+        .then(function (f) {
             console.log('-> profile for %s#%s [tier: %d]', ranking.name, ranking.tag, ranking.tier);
+            return f;
         });
 }, {
     concurrency: 10
@@ -61,14 +62,11 @@ var p = rankings.then(function (rankings) {
         return null;
     } else {
         return profile.getHero(heroList[0].id)
-            .tap(function () {
+            .then(function (f) {
                 console.log('-> hero for %s#%s [tier: %d]', profile.ranking.name, profile.ranking.tag, profile.ranking.tier);
+                return f;
             });
     }
-}, {
-    concurrency: 10
-}).map(function (hero) {
-    return hero;
 }, {
     concurrency: 10
 });
