@@ -48,10 +48,7 @@ if (program.rankings) {
 var p = rankings.then(function (rankings) {
     return rankings.splice(0, program.top).reverse();
 }).map(function (ranking) {
-    return profiles(host, ranking)
-        .tap(function (profile) {
-            console.log('-> fetched profile for %s', profile);
-        });
+    return profiles(host, ranking);
 }, {
     concurrency: 10
 }).map(function (profile) {
@@ -68,21 +65,14 @@ var p = rankings.then(function (rankings) {
     }
 }, {
     concurrency: 10
-}).filter(function(hero) {
+}).filter(function (hero) {
     //weed out null heroes!
     return hero != null;
 });
 
 var connection = db('postgres://d3i:eeee@localhost/d3i');
 p = p.each(function (hero) {
-    if (hero != null)
-        return connection.saveHero(hero).tap(function () {
-            console.log("-> saved hero for %s#%s", hero.profile.ranking.name, hero.profile.ranking.tag);
-        }).catch(function (err) {
-            console.error("failed inserting data for hero " + hero.toString());
-            console.error(err);
-            console.dir(hero);
-        });
+    return connection.saveHero(hero);
 }).then(function () {
     return connection.saveSkills(program.class).tap(function () {
         console.log("Saved skills.");
