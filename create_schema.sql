@@ -8,8 +8,8 @@ CREATE TYPE d3i.skill_type AS ENUM (
 );
 
 create table d3i.hero (
-    id SERIAL,
-    hero_id integer not null,
+    id SERIAL PRIMARY KEY,
+    hero_id integer not null UNIQUE,
     name varchar(50) not null,
     class varchar(50) not null,
     level integer not null,
@@ -26,7 +26,7 @@ create table d3i.hero_stats (
 );
 
 create table d3i.items (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     item_id varchar(50) not null,
     name varchar(50) not null,
     icon varchar(50) not null,
@@ -47,7 +47,7 @@ create table d3i.hero_skills (
 );
 
 create table d3i.skills (
-    id varchar(5) not null,
+    id varchar(5) not null PRIMARY KEY,
     parent_id varchar(5),
     slug varchar(30) not null,
     name varchar(30) not null,
