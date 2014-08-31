@@ -4,99 +4,61 @@
 
 var program = require('commander'),
     Promise = require('bluebird'),
-    path = require('path'),
-    util = require('util'),
-    readFile = Promise.promisify(require('fs').readFile),
-    writeFile = Promise.promisify(require('fs').writeFile),
-    profiles = require('./lib/profiles'),
-    heroes = require('./lib/hero'),
-    db = require('./lib/db'),
-    scraper = require('./lib/rankings-scraper');
+    downloader = require('./lib/downloader'),
+    db = require('./lib/db');
 
 Promise.promisifyAll(require("request"));
 Promise.promisifyAll(require("pg"));
 
 program.version(require('./package.json').version)
-    .option('-r, --rankings <file>', 'File to read ranking info from')
-    .option('-c, --class <c>', 'Class to search')
-    .option('-d, --dump-rankings <file>', 'File to dump ranking info to')
-    .option('-t, --top <n>', 'How many of the top profiles to inspect [100]', 100)
-    .option('-o, --output-folder <folder>', 'Folder to place output in')
-    .parse(process.argv);
+    .option('-c, --classes <c>', 'Class(es) to search', list)
+    .option('-t, --top <n>', 'how many results to scan [100]', 100)
+    .option('-h, --host <host>', 'host to use [us.battle.net]', 'us.battle.net')
+    .option('-d, --db <string>', 'database connection string')
+    .option('--hardcore', 'hardcore mode', false)
+    .option('-i, --items', 'download item data too', false);
 
-var host = 'us.battle.net',
-    rankings,
-    classMap = {
-        dh: 'demon-hunter',
-        wd: 'witch-doctor'
-    }, clss;
+program.command('dl')
+    .description('download leaderboard data and stuff')
+    .action(function () {
+        if (!program.db)
+            return console.error("No db connection string provided");
 
-if (program.rankings) {
-    rankings = readFile(program.rankings).then(function (result) {
-        return JSON.parse(result);
-    });
-} else if (program.class) {
-    var url = 'http://' + host + '/d3/en/rankings/era/1/rift-' + program.class;
-    rankings = scraper(url);
-    clss = classMap[program.class] || program.class;
+        if (!program.classes)
+            program.classes = Object.keys(downloader.classes);
 
-    if (program.dumpRankings) {
-        rankings = rankings.then(function (result) {
-            return writeFile(program.dumpRankings, JSON.stringify(result))
-                .return(result);
-        });
-    }
-} else {
-    return console.error("Um not much we can do here w/out rankings file or class specified");
-}
-
-var p = rankings.then(function (rankings) {
-    return rankings.splice(0, program.top).reverse();
-}).map(function (ranking) {
-    return profiles(host, ranking).tap(function (profile) {
-        console.log('-> saved profile %s', profile);
-    });
-}, {
-    concurrency: 10
-}).map(function (profile) {
-    var heroList = profile.getBestHeroes(clss);
-    if (heroList.length === 0) {
-        //no suitable heroes!
-        console.log('profile %s has no suitable heroes', profile);
-        return Promise.resolve(null);
-    } else {
-        return profile.getHero(heroList[0].id)
-            .tap(function (hero) {
-                console.log('-> saved hero %s', hero);
+        var connection = db(program.db);
+        Promise.all(program.classes.map(function (clss) {
+            //this is really shoddy code
+            return downloader(clss, connection, {
+                count: program.top,
+                host: program.host,
+                concurrency: 15,
+                debug: true,
+                hardcore: program.hardcore,
+                items: program.items
             });
-    }
-}, {
-    concurrency: 10
-});
-
-var connection = db('postgres://d3i:eeee@localhost/d3i');
-p = p.each(function (hero) {
-    return hero === null ? Promise.resolve(null) : connection.saveHero(hero);
-}).then(function () {
-    return connection.saveSkills(clss).tap(function () {
-        console.log("Saved skills.");
-    });
-}).then(function () {
-    //i know this is crappy but that's how i roll suck it nerds
-    connection.destroy();
-});
-
-// does this even work any more?
-if (program.outputFolder)
-    p = p.map(function (hero) {
-        var fname = util.format('%s-%s-%s.json', hero.profile.ranking.name, hero.profile.ranking.tag, hero.name);
-        return writeFile(path.join(program.outputFolder, fname), JSON.stringify(hero))
-            .return(fname);
-    }).each(function (file) {
-        console.log("Wrote file %s", file);
+        })).then(function () {
+            connection.destroy();
+        }).catch(function (err) {
+            console.log(err);
+            console.log(err.stack);
+        });
     });
 
-p = p.catch(function (err) {
-    console.log(err);
-    console.log(err.stack);
-});
+program.command('www')
+    .description('run REST API')
+    .action(function () {
+        if (!program.db)
+            return console.error("No db connection string provided");
+
+        require('./lib/www')(program.db, {
+            debug: true
+        });
+    });
+
+program.parse(process.argv);
+
+function list(val) {
+    return val.split(',');
+}
