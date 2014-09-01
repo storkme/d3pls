@@ -33,7 +33,7 @@ program.command('dl')
             return downloader(clss, connection, {
                 count: program.top,
                 host: program.host,
-                concurrency: 5,
+                concurrency: 2,
                 debug: true,
                 hardcore: program.hardcore,
                 items: program.items
