@@ -20,3 +20,10 @@ select hero.class
     from d3i.hero
     order by hero.ranking_tier desc
     limit 10;
+
+SELECT class, hardcore, host, count(*), min(ranking_tier) min_tier, max(ranking_tier) as max_tier, avg(ranking_tier) as avg_tier,
+        min(paragon_level) as min_paragon, max(paragon_level) as max_paragon, avg(paragon_level)
+        as avg_paragon,
+        avg(last_updated) as age
+    FROM hero
+    GROUP BY class, hardcore, host
