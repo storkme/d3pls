@@ -30,7 +30,7 @@ program.command('dl')
 
         var connection = db(program.db);
 
-        Bacon.mergeAll(program.classes.map(function (clss) {
+        var stream = Bacon.mergeAll(program.classes.map(function (clss) {
             //this is really shoddy code
             return downloader(clss, connection, {
                 count: program.top,
@@ -40,9 +40,11 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).onError(function (err) {
-            console.error("Error and stuff! D:", err);
-        }).onEnd(function() {
+        }));
+        stream.onError(function (err) {
+            console.error("Error", err);
+        });
+        stream.onEnd(function () {
             connection.destroy();
         });
     });
