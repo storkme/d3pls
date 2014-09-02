@@ -4,7 +4,7 @@
 
 var program = require('commander'),
     Promise = require('bluebird'),
-    Rx = require('rx'),
+    Bacon = require('baconjs').Bacon,
     downloader = require('./lib/downloader'),
     db = require('./lib/db');
 
@@ -30,7 +30,7 @@ program.command('dl')
 
         var connection = db(program.db);
 
-        Rx.Observable.merge(program.classes.map(function (clss) {
+        Bacon.mergeAll(program.classes.map(function (clss) {
             //this is really shoddy code
             return downloader(clss, connection, {
                 count: program.top,
@@ -40,14 +40,13 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).subscribe(function () {
-            },
+        })).onEnd(function () {
+            connection.destroy();
+        }).onError(
             function (err) {
                 console.error("Error doing stuff");
                 console.log(err);
                 console.log(err.stack);
-            }, function () {
-                connection.destroy();
             });
     });
 
