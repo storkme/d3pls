@@ -42,6 +42,8 @@ program.command('dl')
             });
         })).onError(function (err) {
             console.error("Error and stuff! D:", err);
+        }).onEnd(function() {
+            connection.destroy();
         });
     });
 
