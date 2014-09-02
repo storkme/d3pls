@@ -42,12 +42,7 @@ program.command('dl')
             });
         })).onEnd(function () {
             connection.destroy();
-        }).onError(
-            function (err) {
-                console.error("Error doing stuff");
-                console.log(err);
-                console.log(err.stack);
-            });
+        });
     });
 
 program.command('www')
