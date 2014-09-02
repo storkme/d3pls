@@ -45,8 +45,8 @@ program.command('dl')
             console.error("Error", err);
         });
         stream.onEnd(function () {
-            console.log("ALL FINISHED!");
-//            connection.destroy();
+            console.log("le fin");
+            connection.destroy();
         });
     });
 
