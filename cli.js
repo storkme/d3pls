@@ -40,7 +40,7 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).errors(function (err) {
+        })).onError(function (err) {
             console.log("Error and stuff! D:");
             console.dir(err);
             console.dir(err.stack);
