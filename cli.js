@@ -41,9 +41,7 @@ program.command('dl')
                 items: program.items
             });
         })).onError(function (err) {
-            console.log("Error and stuff! D:");
-            console.dir(err);
-            console.dir(err.stack);
+            console.error("Error and stuff! D:", err);
         });
     });
 
