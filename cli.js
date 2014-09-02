@@ -38,7 +38,7 @@ program.command('dl')
                 concurrency: 2,
                 debug: true,
                 hardcore: program.hardcore,
-                items: program.items
+                items: !!program.items
             });
         }));
         stream.onError(function (err) {
