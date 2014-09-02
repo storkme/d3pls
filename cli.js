@@ -41,7 +41,7 @@ program.command('dl')
                 items: program.items
             });
         })).subscribe(function (val) {
-            console.log(val);
+            console.dir(val);
         });
     });
 
