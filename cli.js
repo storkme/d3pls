@@ -4,6 +4,7 @@
 
 var program = require('commander'),
     Promise = require('bluebird'),
+    Rx = require('rx'),
     downloader = require('./lib/downloader'),
     db = require('./lib/db');
 
@@ -28,7 +29,8 @@ program.command('dl')
             program.classes = Object.keys(downloader.classes);
 
         var connection = db(program.db);
-        Promise.all(program.classes.map(function (clss) {
+
+        Rx.Observable.merge(program.classes.map(function (clss) {
             //this is really shoddy code
             return downloader(clss, connection, {
                 count: program.top,
@@ -38,12 +40,15 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).then(function () {
-            connection.destroy();
-        }).catch(function (err) {
-            console.log(err);
-            console.log(err.stack);
-        });
+        })).subscribe(function () {
+            },
+            function (err) {
+                console.error("Error doing stuff");
+                console.log(err);
+                console.log(err.stack);
+            }, function () {
+                connection.destroy();
+            });
     });
 
 program.command('www')
