@@ -40,8 +40,10 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).subscribe(function (val) {
-            console.dir(val);
+        })).errors(function (err) {
+            console.log("Error and stuff! D:");
+            console.dir(err);
+            console.dir(err.stack);
         });
     });
 
