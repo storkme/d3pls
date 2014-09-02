@@ -40,8 +40,8 @@ program.command('dl')
                 hardcore: program.hardcore,
                 items: program.items
             });
-        })).onEnd(function () {
-            connection.destroy();
+        })).subscribe(function (val) {
+            console.log(val);
         });
     });
 
