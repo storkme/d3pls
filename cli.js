@@ -4,6 +4,7 @@
 
 var program = require('commander'),
     Promise = require('bluebird'),
+    Bacon = require('baconjs').Bacon,
     downloader = require('./lib/downloader'),
     db = require('./lib/db');
 
@@ -28,21 +29,24 @@ program.command('dl')
             program.classes = Object.keys(downloader.classes);
 
         var connection = db(program.db);
-        Promise.all(program.classes.map(function (clss) {
+
+        var stream = Bacon.mergeAll(program.classes.map(function (clss) {
             //this is really shoddy code
             return downloader(clss, connection, {
                 count: program.top,
                 host: program.host,
-                concurrency: 1,
+                concurrency: 2,
                 debug: true,
                 hardcore: program.hardcore,
-                items: program.items
+                items: !!program.items
             });
-        })).then(function () {
+        }));
+        stream.onError(function (err) {
+            console.error("Error", err);
+        });
+        stream.onEnd(function () {
+            console.log("le fin");
             connection.destroy();
-        }).catch(function (err) {
-            console.log(err);
-            console.log(err.stack);
         });
     });
 
