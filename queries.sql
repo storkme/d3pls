@@ -25,7 +25,7 @@ SELECT class, hardcore, host, count(*), min(ranking_tier) min_tier, max(ranking_
         as avg_paragon,
         avg(last_updated) as age
     FROM hero
-    GROUP BY class, hardcore, host
+    GROUP BY class, hardcore, host;
 
 select hero.*, skills.name from hero_skills
         inner join hero on hero.id = hero_skills.hero_id
@@ -52,3 +52,33 @@ and skills.type = 'passive'
 order by
     hero.id asc,
     skills.name asc;
+
+-- hero gem summary
+select hero.class,
+        count(*) as count
+    from items
+        join hero on items.hero_id = hero.id
+    where
+        data is not null
+        and json_array_length(data->'gems') = 1
+        and data->'gems'->0->>'isJewel' = 'true'
+        and not hero.hardcore
+    group by
+        hero.class
+    order by hero.class, count(*) desc;
+
+-- jewels
+select hero.class,
+        data->'gems'->0->'item'->>'name' as gem,
+        avg((data->'gems'->0->>'jewelRank')::int) as avg_rank,
+        count(*) as count
+    from items
+        join hero on items.hero_id = hero.id
+    where
+        data is not null
+        and json_array_length(data->'gems') = 1
+        and data->'gems'->0->>'isJewel' = 'true'
+        and hero.hardcore
+    group by
+        hero.class, gem
+    order by hero.class, count(*) desc;

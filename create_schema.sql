@@ -25,6 +25,7 @@ create table hero (
     last_updated integer not null,
     paragon_level integer not null,
     host text not null,
+    seasonCreated integer default null,
     hardcore boolean not null
 );
 
