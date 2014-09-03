@@ -17,7 +17,7 @@ program.version(require('./package.json').version)
     .option('-h, --host <host>', 'host to use [us.battle.net]', 'us.battle.net')
     .option('-d, --db <string>', 'database connection string')
     .option('--hardcore', 'hardcore mode', false)
-    .option('-s, --seasons', 'seasons?', false)
+    .option('-s, --season <s>', 'season? [false]', false)
     .option('-i, --items', 'download item data too', false);
 
 program.command('dl')
@@ -39,7 +39,7 @@ program.command('dl')
                 concurrency: 2,
                 debug: true,
                 hardcore: program.hardcore,
-                seasons: program.seasons,
+                season: program.season,
                 items: !!program.items
             });
         }));
