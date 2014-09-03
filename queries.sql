@@ -78,7 +78,37 @@ select hero.class,
         data is not null
         and json_array_length(data->'gems') = 1
         and data->'gems'->0->>'isJewel' = 'true'
-        and hero.hardcore
+        and hero.hardcore --hardcore???
     group by
         hero.class, gem
     order by hero.class, count(*) desc;
+
+-- has rorg?
+select hero.class,
+        hero.hardcore,
+        count(*)
+    from items
+        join hero on items.hero_id = hero.id
+    where
+        items.item_id = 'Unique_Ring_107_x1'
+        and hero.seasoncreated is null
+    group by
+        hero.class,
+        hero.hardcore
+    order by hero.hardcore, hero.class;
+
+-- set items???
+select hero.class,
+        data->'set'->>'name' as set_name,
+        count(*) as count
+    from items
+        join hero on items.hero_id = hero.id
+    where
+        data is not null
+        and not hero.hardcore
+        and hero.seasoncreated is null
+    group by
+        hero.class, set_name
+    order by hero.class, count(*) desc;
+
+-- barb items :D
