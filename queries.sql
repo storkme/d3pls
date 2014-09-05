@@ -1,57 +1,21 @@
--- popular passives
-select hero.class, sk.name as skill, count(*) as count
+-- actives
+select hero.class, sk.name as skill, ru.name as rune, count(*) as count
     from hero_skills hs
-        join skills sk on sk.id = hs.skill_id and sk.type = 'passive' and hs.rune_id is null
         join hero hero on hero.id = hs.hero_id
-    where not hero.hardcore
-    group by skill, hero.class
+        join skills sk on
+            sk.id = hs.skill_id
+            and sk.type = 'skill'
+            and sk.class = hero.class
+        join skills ru on
+            ru.id = hs.rune_id
+            and ru.parent_id = hs.skill_id
+            and ru.type = 'rune'
+            and ru.class = hero.class
+    WHERE not hero.hardcore
+          AND hero.host = 'us.battle.net'
+          AND hero.seasoncreated is null
+    group by skill, rune, hero.class \
     order by hero.class, count desc;
-
-select hero.class, sk.name as skill, count(*) as count
-        from hero_skills hs
-        inner join hero hero on hero.id = hs.hero_id
-        inner join skills sk on sk.id = hs.skill_id and sk.type = 'passive' and sk.class = hero.class
-        WHERE hero.class='barbarian' and hero.hardcore = 't'
-        group by sk.name, hero.class
-        order by hero.class, count desc;
-
-select hero.class
-    from d3i.hero
-    order by hero.ranking_tier desc
-    limit 10;
-
-SELECT class, hardcore, host, count(*), min(ranking_tier) min_tier, max(ranking_tier) as max_tier, avg(ranking_tier) as avg_tier,
-        min(paragon_level) as min_paragon, max(paragon_level) as max_paragon, avg(paragon_level)
-        as avg_paragon,
-        avg(last_updated) as age
-    FROM hero
-    GROUP BY class, hardcore, host;
-
-select hero.*, skills.name from hero_skills
-        inner join hero on hero.id = hero_skills.hero_id
-        inner join skills on (skills.id = hero_skills.skill_id and skills.type = 'passive')
-        where hero.class='barbarian';
-
-
-
-select
-    hero.*,
-    hero_skills.*,
-    skills.name,
-    skills.id,
-    skills.type
-from hero
-join hero_skills
-    on hero_skills.hero_id = hero.id
-join skills
-    on skills.id = hero_skills.skill_id
-        and skills.class = hero.class
-        and hero_skills.rune_id is null
-where hero.class = 'barbarian'
-and skills.type = 'passive'
-order by
-    hero.id asc,
-    skills.name asc;
 
 -- hero gem summary
 select hero.class,
@@ -111,4 +75,27 @@ select hero.class,
         hero.class, set_name
     order by hero.class, count(*) desc;
 
--- barb items :D
+-- barb cdr?
+select foo.class, count(*), foo.total_cdr as total_cdr_excluding_paragon
+    from (select hero.class,
+                sum(round((data->'attributesRaw'->'Power_Cooldown_Reduction_Percent_All'->>'min')::numeric, 1)) as total_cdr
+            from items
+                join hero on items.hero_id = hero.id
+            where
+                data is not null
+                and (data->'attributesRaw'->>'Power_Cooldown_Reduction_Percent_All') is not null
+                and not hero.hardcore --hardcore???
+            group by hero.id
+        ) as foo
+    group by foo.class, foo.total_cdr
+    order by foo.class, foo.total_cdr desc;
+
+select hero.class,
+        sum(round((data->'attributesRaw'->'Power_Cooldown_Reduction_Percent_All'->>'min')::numeric, 1)) as total_cdr
+    from items
+        join hero on items.hero_id = hero.id
+    where
+        data is not null
+        and (data->'attributesRaw'->>'Power_Cooldown_Reduction_Percent_All') is not null
+        and not hero.hardcore --hardcore???
+    group by hero.id;
