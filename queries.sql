@@ -42,7 +42,7 @@ select hero.class,
         data is not null
         and json_array_length(data->'gems') = 1
         and data->'gems'->0->>'isJewel' = 'true'
-        and hero.hardcore --hardcore???
+        and not hero.hardcore --hardcore???
     group by
         hero.class, gem
     order by hero.class, count(*) desc;
@@ -99,3 +99,28 @@ select hero.class,
         and (data->'attributesRaw'->>'Power_Cooldown_Reduction_Percent_All') is not null
         and not hero.hardcore --hardcore???
     group by hero.id;
+
+
+-- actives w/ limit ?
+select hero.class, sk.name as skill, ru.name as rune, count(*) as count
+    from hero_skills hs
+        join (
+                SELECT * FROM hero
+                WHERE hero.class = 'barbarian'
+                ORDER BY hero.ranking_tier DESC
+                LIMIT 100
+            ) hero on hero.id = hs.hero_id
+        join skills sk on
+            sk.id = hs.skill_id
+            and sk.type = 'skill'
+            and sk.class = hero.class
+        join skills ru on
+            ru.id = hs.rune_id
+            and ru.parent_id = hs.skill_id
+            and ru.type = 'rune'
+            and ru.class = hero.class
+    WHERE not hero.hardcore
+          AND hero.host = 'us.battle.net'
+          AND hero.seasoncreated is null
+    group by skill, rune, hero.class
+    order by hero.class, count desc;
