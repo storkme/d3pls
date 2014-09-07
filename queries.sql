@@ -42,7 +42,8 @@ select hero.class,
         data is not null
         and json_array_length(data->'gems') = 1
         and data->'gems'->0->>'isJewel' = 'true'
-        and not hero.hardcore --hardcore???
+        and not hero.hardcore --not hardcore???
+        and hero.ranking_tier > 35
     group by
         hero.class, gem
     order by hero.class, count(*) desc;
@@ -124,3 +125,37 @@ select hero.class, sk.name as skill, ru.name as rune, count(*) as count
           AND hero.seasoncreated is null
     group by skill, rune, hero.class
     order by hero.class, count desc;
+
+
+-- jewels w/ limit
+select hero.class,
+        data->'gems'->0->'item'->>'name' as gem,
+        round(avg((data->'gems'->0->>'jewelRank')::int), 1) as avg_rank,
+        count(*) as count
+    from items
+        join (
+            select * from (
+                    select row_number() over (partition by hero.class order by hero.ranking_tier desc) as r,
+                    hero.* from hero
+                    where not hero.hardcore
+                ) t
+                where t.r <= 10000
+         ) hero on items.hero_id = hero.id
+    where
+        data is not null
+        and json_array_length(data->'gems') = 1
+        and data->'gems'->0->>'isJewel' = 'true'
+    group by
+        hero.class, gem
+    having count(*) > 10
+    order by hero.class, count(*) desc;
+
+-- top few heroes from whatever ranking
+select hero.class, hero.hardcore, count(*) from (
+        select row_number() over (partition by hero.c2lass order by hero.ranking_tier desc) as r,
+        hero.* from hero
+            where hardcore
+    ) hero
+    where hero.r <= 100
+    group by hero.class, hero.hardcore;
+

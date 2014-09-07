@@ -26,7 +26,8 @@ create table hero (
     paragon_level integer not null,
     host text not null,
     seasonCreated integer default null,
-    hardcore boolean not null
+    hardcore boolean not null,
+    last_modified timestamp not null default current_timestamp
 );
 
 create table hero_stats (
@@ -44,7 +45,7 @@ create table items (
     color text not null,
     tooltip_params text not null,
     slot item_slot not null,
-    data json
+    data jsonb
 );
 
 create table hero_skills (
