@@ -139,11 +139,11 @@ select hero.class,
                     hero.* from hero
                     where not hero.hardcore
                 ) t
-                where t.r <= 10000
+                where t.r <= 100
          ) hero on items.hero_id = hero.id
     where
         data is not null
-        and json_array_length(data->'gems') = 1
+        and jsonb_array_length(data->'gems') = 1
         and data->'gems'->0->>'isJewel' = 'true'
     group by
         hero.class, gem
@@ -159,3 +159,21 @@ select hero.class, hero.hardcore, count(*) from (
     where hero.r <= 100
     group by hero.class, hero.hardcore;
 
+
+-- items?
+ select hero.class,
+        data->>'name' as item,
+        split_part(data->>'typeName', ' ', 2) as slot,
+        count(*) as count
+    from items
+        join (
+        select * from (
+                select row_number() over (partition by hero.class order by hero.ranking_tier desc) as r,
+                hero.* from hero
+                where not hero.hardcore
+            ) t
+            where t.r <= 100
+         ) hero on items.hero_id = hero.id
+    group by hero.class, data->>'name', split_part(data->>'typeName', ' ', 2)
+    having count(*) > 5
+    order by hero.class, count desc;
