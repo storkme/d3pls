@@ -1,9 +1,3 @@
-CREATE USER d3i_user WITH PASSWORD 'pls';
-GRANT ALL PRIVILEGES ON DATABASE d3i TO d3i_user;
-
-CREATE DATABASE d3i;
-USE d3i;
-
 CREATE TYPE item_slot AS ENUM (
     'head', 'torso', 'feet', 'hands', 'shoulders', 'legs', 'bracers',
     'mainHand', 'offHand', 'waist', 'rightFinger', 'leftFinger', 'neck'

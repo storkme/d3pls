@@ -152,7 +152,7 @@ select hero.class,
 
 -- top few heroes from whatever ranking
 select hero.class, hero.hardcore, count(*) from (
-        select row_number() over (partition by hero.c2lass order by hero.ranking_tier desc) as r,
+        select row_number() over (partition by hero.class order by hero.ranking_tier desc) as r,
         hero.* from hero
             where hardcore
     ) hero
@@ -177,3 +177,9 @@ select hero.class, hero.hardcore, count(*) from (
     group by hero.class, data->>'name', split_part(data->>'typeName', ' ', 2)
     having count(*) > 5
     order by hero.class, count desc;
+
+-- all item types?
+select data->'type'->>'id' as thing
+    from items
+    group by data->'type'->>'id'
+    order by thing;
